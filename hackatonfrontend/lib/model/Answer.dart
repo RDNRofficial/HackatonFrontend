@@ -1,6 +1,4 @@
-
 class Answer {
-
   String before;
   String after;
   bool solution;
@@ -8,8 +6,5 @@ class Answer {
   int x;
   int y;
 
-  Answer() {
-
-  }
-
+  Answer() {}
 }

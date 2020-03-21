@@ -1,4 +1,3 @@
-
 class Question {
   String question;
   String background;

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
+import 'package:hackatonfrontend/quiz/Quiz.dart';
 
 void main() => runApp(MyApp());
 
@@ -30,13 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   // Übergang ins Spiel
   void _startGame() async {
@@ -62,6 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
     flameUtil.addGestureRecognizer(tapper);
   }
 
+  void _startQuiz() {
+    runApp(Quiz());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,18 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.lightGreen,
             ),
             RaisedButton(
-              onPressed: (){},
+              onPressed: this._startQuiz,
               child: Text("Quiz"),
               color: Colors.lightGreen,
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

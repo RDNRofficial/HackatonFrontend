@@ -34,7 +34,9 @@ class Enemy {
 
   void update(double t) {
     if (isDead) {
-      this.enemyRect = this.enemyRect.translate(0, this.game.tileSize * this.fallingSpeed * t);
+      this.enemyRect = this
+          .enemyRect
+          .translate(0, this.game.tileSize * this.fallingSpeed * t);
       if (this.enemyRect.top > this.game.screenSize.height) {
         isOffscreen = true;
       }
