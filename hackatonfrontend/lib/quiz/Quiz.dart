@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hackatonfrontend/quiz/CurvePainter.dart';
 
 class Quiz extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return null;
+    return MaterialApp(
+      title: "Corona Quiz",
+      home: Container(color: Colors.white, child: CustomPaint(painter: CurvePainter()),)
+    );
   }
 }
 

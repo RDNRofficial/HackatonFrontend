@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
+import 'package:hackatonfrontend/quiz/Quiz.dart';
 
 void main() => runApp(MyApp());
 
@@ -56,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startQuiz() {
-
+    runApp(Quiz());
   }
 
   @override
