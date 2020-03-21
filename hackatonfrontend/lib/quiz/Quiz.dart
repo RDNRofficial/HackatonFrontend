@@ -42,6 +42,19 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
 
     
-    return Container();
+    return Container(
+      child: FutureBuilder<List<Question>>(
+        future: this.futureQuestion,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(snapshot.data.map((Question q) => q.question).join(" "));
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+
+          return CircularProgressIndicator();
+        },
+      ),
+    );
   }
 }
