@@ -42,6 +42,7 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion()),
+      backgroundColor: Colors.grey[900],
       body: FutureBuilder<List<Question>>(
         future: this.futureQuestion,
         builder: (context, snapshot) {

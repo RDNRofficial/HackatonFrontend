@@ -67,10 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     runApp(Quiz());
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     
