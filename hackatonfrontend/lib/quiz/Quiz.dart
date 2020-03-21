@@ -9,15 +9,11 @@ import 'package:hackatonfrontend/services/Rest.dart';
 class Quiz extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    this.initialize();
-
     return MaterialApp(
         title: "Corona Quiz",
         home: Container(
             color: Colors.white, child: CustomPaint(painter: CurvePainter())));
   }
-
-  void initialize() {}
 }
 
 class QuizPage extends StatefulWidget {

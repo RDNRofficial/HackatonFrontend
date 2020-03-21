@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hackatonfrontend/game/DrawEnemy.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
+import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/quiz/Quiz.dart';
 
 
@@ -65,6 +66,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startQuiz() {
     runApp(Quiz());
   }
+
+  Future<List<Question>> futureQuestion;
+
+  @override
+  void initState() {
+    super.initState();
+    this.futureQuestion =  Rest.instance.fetchQuestionList();
+  }
+
+
 
 
   @override
