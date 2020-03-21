@@ -35,10 +35,15 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class Router {
+  static final Router instance = Router.internal();
+  factory Router() => instance;
+
+
+  Router.internal() {}
 
   // Übergang ins Spiel
-  void _startGame() async {
+  startGame() async {
     //runApp(DrawEnemy());
 
     WidgetsFlutterBinding.ensureInitialized();
@@ -63,13 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
     flameUtil.addGestureRecognizer(tapper);
   }
 
-  void _startQuiz() {
+  startQuiz() {
     runApp(Quiz());
   }
+}
 
-
-
-
+class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
-              onPressed: this._startGame,
+              onPressed: Router.instance.startGame,
               child: Text("Game"),
               color: Colors.lightGreen,
             ),
             RaisedButton(
-              onPressed: this._startQuiz,
+              onPressed: Router.instance.startQuiz,
               child: Text("Quiz"),
               color: Colors.lightGreen,
             ),
