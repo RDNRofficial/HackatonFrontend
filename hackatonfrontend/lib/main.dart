@@ -1,9 +1,13 @@
+import 'package:flame/flame.dart';
+import 'package:flame/util.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hackatonfrontend/game/GameEngine.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,9 +38,32 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // Übergang ins Spiel
+  void _startGame() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    Util flameUtil = new Util();
+    await flameUtil.fullScreen();
+    await flameUtil.setOrientation(DeviceOrientation.portraitUp);
+
+    // Alle benötigten Bilder werden vorgeladen.
+    Flame.images.loadAll(<String>[
+      "virus.png"
+    ]);
+
+    // Alle benötigten Audios werden vorgeladen.
+    Flame.audio.loadAll(<String>[]);
+
+    GameEngine game = GameEngine();
+    runApp(game.widget);
+
+    TapGestureRecognizer tapper = TapGestureRecognizer();
+    tapper.onTapDown = game.onTapDown;
+    flameUtil.addGestureRecognizer(tapper);
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -45,12 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            RaisedButton(
+              onPressed: this._startGame,
+              child: Text("Game"),
+              color: Colors.lightGreen,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            RaisedButton(
+              onPressed: (){},
+              child: Text("Quiz"),
+              color: Colors.lightGreen,
             ),
           ],
         ),
