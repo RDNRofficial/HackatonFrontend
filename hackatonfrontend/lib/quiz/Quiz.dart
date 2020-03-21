@@ -48,12 +48,17 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Widget getQuestionWidget(QuestionAnswer qa) {
-    return new Column(
-        children: <Widget>[
-          SizedBox(height: 50),
-          new Text(qa.question.question),
-          new Text(qa.answers.length.toString()),
-        ]);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(image: Image.network(qa.question.background).image, fit: BoxFit.cover),
+      ),
+      child: new Column(
+          children: <Widget>[
+            SizedBox(height: 50),
+            new Text(qa.question.question),
+            new Text(qa.answers.length.toString()),
+          ])
+    );
   }
 
   @override
@@ -64,6 +69,7 @@ class _QuizPageState extends State<QuizPage> {
         if (snapshot.hasData) {
           return
             Scaffold(
+
                 floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion(snapshot.data), child: Icon(Icons.help_outline),),
                 body: this.getQuestionWidget(snapshot.data[this.questionNumber])
             );
