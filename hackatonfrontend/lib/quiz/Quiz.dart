@@ -2,6 +2,7 @@ import "dart:developer" as console;
 import 'package:flutter/material.dart';
 import 'package:hackatonfrontend/quiz/CurvePainter.dart';
 import 'package:hackatonfrontend/model/Question.dart';
+import 'package:hackatonfrontend/model/Answer.dart';
 import 'package:hackatonfrontend/services/Rest.dart';
 
 class Quiz extends StatelessWidget {
@@ -22,11 +23,13 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   Future<List<Question>> futureQuestion;
+  Future<List<Answer>> futureAnswer;
 
   @override
   void initState() {
     super.initState();
-    this.futureQuestion = Rest.instance.fetchQuestionList();
+    this.futureAnswer = Rest.instance.fetchAnswerList();
+    this.futureQuestion =  Rest.instance.fetchQuestionList();
   }
 
   @override
@@ -42,7 +45,6 @@ class _QuizPageState extends State<QuizPage> {
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-
           return CircularProgressIndicator();
         },
       ),
