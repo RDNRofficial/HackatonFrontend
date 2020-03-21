@@ -4,7 +4,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
+import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/quiz/Quiz.dart';
+
+
+import 'services/Rest.dart';
 
 void main() => runApp(MyApp());
 
@@ -60,6 +64,16 @@ class _MyHomePageState extends State<MyHomePage> {
     runApp(Quiz());
   }
 
+  Future<List<Question>> futureQuestion;
+
+  @override
+  void initState() {
+    super.initState();
+    futureQuestion =  Rest.instance.fetchQuestions();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +93,19 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: this._startQuiz,
               child: Text("Quiz"),
               color: Colors.lightGreen,
+            ),
+            FutureBuilder<List<Question>>(
+              future: this.futureQuestion,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data.map((Question q) => q.question).join(" "));
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+
+                // By default, show a loading spinner.
+                return CircularProgressIndicator();
+              },
             ),
           ],
         ),

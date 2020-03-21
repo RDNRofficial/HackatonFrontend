@@ -6,7 +6,7 @@ import 'package:hackatonfrontend/model/Question.dart';
 
 
 class Rest {
-  static final URL_QUESTION = "";
+  static final URL_QUESTION = "rest/question/";
 
   static final Rest instance = Rest.internal();
   factory Rest() => instance;
@@ -14,11 +14,21 @@ class Rest {
   String url;
 
   Rest.internal() {
-    this.url = "";
+    this.url = "http://bitschi.hopto.org:8000/";
+  }
+
+  Future<List<Question>> fetchQuestions() async {
+    final response = await http.get(this.url + Rest.URL_QUESTION);
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((q) => Question.fromJson(q)).toList();
+    } else {
+      throw Exception('Failed to load question');
+    }
   }
 
   Future<Question> fetchQuestion() async {
-    final response = await http.get(this.url);
+    final response = await http.get(this.url + Rest.URL_QUESTION);
     if (response.statusCode == 200) {
       return Question.fromJson(json.decode(response.body));
     } else {
