@@ -47,18 +47,26 @@ class _QuizPageState extends State<QuizPage> {
     this.future =  Rest.instance.fetchQuestionAnswerList();
   }
 
-  Widget getAnswerWidget(double x, double y, Image background) {
+  Widget getAnswerWidget(BuildContext context, Answer a) {
+    int width = MediaQuery.of(context).size.width.toInt();
+    double y = 200;
     return Positioned(
-        left: x,
-        top: y,
+        left: 0,
+        top: 0,
+        width: 50,
+        height: 50,
         child: GestureDetector(
           onTap: () => console.log("Test"),
-          child: Text("asdf"),
+          child: Image(
+              image: Image.network(a.before).image,
+              width: 50,
+              height: 50,
+          )
         )
     );
   }
 
-    Widget getQuestionWidget(QuestionAnswer qa, List<QuestionAnswer> list) {
+    Widget getQuestionWidget(BuildContext context, QuestionAnswer qa, List<QuestionAnswer> list) {
     Image background = Image.network(qa.question.background);
     return Stack(
       children: <Widget>[
@@ -78,17 +86,19 @@ class _QuizPageState extends State<QuizPage> {
             child: Icon(Icons.help_outline),
           ),
           body: new Column(
-              children: <Widget>[
-                SizedBox(height: 50),
-                Center(child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 30),)),
-                new Text(qa.answers.length.toString()),
-              ]
+            children: <Widget>[
+              SizedBox(height: 50),
+              Center(child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 30),)),
+              new Text(qa.answers.length.toString()),
+            ]
           ),
         ),
-        this.getAnswerWidget(10, 100, background),
-        this.getAnswerWidget(30, 400, background),
-        this.getAnswerWidget(300, 600, background)
-      ],
+      ] + qa.answers.map((Answer a) => Image(
+        image: Image.network("http://bitschi.hopto.org:8000" + a.before).image,
+        width: 200,
+        height: 200,
+      )).toList()
+      /*qa.answers.map((Answer a) => this.getAnswerWidget(context, a)).toList() */,
     );
   }
 
@@ -98,7 +108,7 @@ class _QuizPageState extends State<QuizPage> {
       future: this.future,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return this.getQuestionWidget(snapshot.data[this.questionNumber], snapshot.data);
+          return this.getQuestionWidget(context, snapshot.data[this.questionNumber], snapshot.data);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
