@@ -3,6 +3,7 @@ import 'package:flame/util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hackatonfrontend/game/DrawEnemy.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 import 'package:hackatonfrontend/quiz/Quiz.dart';
 
@@ -34,6 +35,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Übergang ins Spiel
   void _startGame() async {
+    //runApp(DrawEnemy());
+
     WidgetsFlutterBinding.ensureInitialized();
 
     Util flameUtil = new Util();
@@ -62,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
