@@ -25,7 +25,7 @@ class Rest {
   Future<List<QuestionAnswer>> fetchQuestionAnswerList() async {
     final response = await http.get(this.url + Rest.URL_QUESTION_ANSWER);
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       return jsonResponse.map((q) => QuestionAnswer.fromJson(q)).toList();
     } else {
       throw Exception('Failed to load question');
@@ -35,7 +35,7 @@ class Rest {
   Future<List<Question>> fetchQuestionList() async {
     final response = await http.get(this.url + Rest.URL_QUESTION);
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       return jsonResponse.map((q) => Question.fromJson(q)).toList();
     } else {
       throw Exception('Failed to load question');
@@ -45,7 +45,7 @@ class Rest {
   Future<List<Answer>> fetchAnswerList() async {
     final response = await http.get(this.url + Rest.URL_ANSWER);
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       return jsonResponse.map((q) => Answer.fromJson(q)).toList();
     } else {
       throw Exception('Failed to load question');
