@@ -1,5 +1,6 @@
 import "dart:developer" as console;
 import 'package:flutter/material.dart';
+import 'package:hackatonfrontend/main.dart';
 import 'package:hackatonfrontend/quiz/CurvePainter.dart';
 import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/model/Answer.dart';
@@ -27,8 +28,15 @@ class _QuizPageState extends State<QuizPage> {
 
   int questionNumber = 0;
 
-  void nextQuestion() {
-    this.setState(() => this.questionNumber++);
+  void nextQuestion(List<Question> questions) {
+    this.setState(
+      () {
+        if(questions.length > this.questionNumber + 1) {
+          this.questionNumber++;
+        }else {
+          Router.instance.startGame();
+        }
+      });
   }
 
   @override
@@ -40,24 +48,25 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion()),
-      backgroundColor: Colors.grey[900],
-      body: FutureBuilder<List<Question>>(
-        future: this.futureQuestion,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return new Column(
-                children: <Widget>[
-                  SizedBox(height: 50),
-                  new Text(snapshot.data[this.questionNumber].question)
-            ]);
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return CircularProgressIndicator();
-        },
-      ),
+    return FutureBuilder<List<Question>>(
+      future: this.futureQuestion,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return
+            Scaffold(
+                floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion(snapshot.data), child: Icon(Icons.help_outline),),
+                backgroundColor: Colors.grey[900],
+                body: new Column(
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      new Text(snapshot.data[this.questionNumber].question, style: TextStyle(color: Colors.grey[100])),
+                    ])
+            );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return CircularProgressIndicator();
+      },
     );
   }
 }
