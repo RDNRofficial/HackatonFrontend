@@ -14,6 +14,7 @@ class GameEngine extends Game {
   double tileSize; // Größe eines Tiles abhängig von der Screen Breite.
 
   List<Enemy> enemies;
+  List<Enemy> toRemove;
 
   Random rnd;
 
@@ -29,6 +30,7 @@ class GameEngine extends Game {
         .initialDimensions()); // Await, damit eventuelle 0x0 Auflösungen verhindert werden.
     this.rnd = Random();
     this.enemies = List<Enemy>();
+    this.toRemove = List<Enemy>();
     this.spawnEnemy();
     this.spawnCountdown = 5.0;
     this.spawnCounter = this.spawnCountdown;
@@ -48,11 +50,13 @@ class GameEngine extends Game {
   void update(double t) {
     this.enemies.forEach((Enemy e) {
       if (e.isOffscreen) {
-        this.enemies.remove(e);
+        this.toRemove.add(e);
       } else {
         e.update(t);
       }
     });
+    this.toRemove.forEach((e) => this.enemies.remove(e));
+    this.toRemove = List<Enemy>();
     if (this.spawnCounter - t <= 0) {
       this.spawnEnemy();
       this.spawnCounter = this.spawnCountdown;
@@ -61,6 +65,7 @@ class GameEngine extends Game {
     }
   }
 
+  // isHandled wird verwendet, um Elemente, die eventuell übereinander liegen nicht mehrfach zu bearbeiten. Beispiel: Button über Spielfigur.
   void onTapDown(TapDownDetails d) {
     bool isHandled = false;
 
@@ -74,13 +79,14 @@ class GameEngine extends Game {
     }
   }
 
+  // Erzeugt einen Virus an random x und y.
   void spawnEnemy() {
     double x = rnd.nextDouble() * (this.screenSize.width - tileSize);
     double y = rnd.nextDouble() * (this.screenSize.height - tileSize);
     this.enemies.add(Enemy(this, x, y));
   }
 
-  //
+  // Wird immer aufgerufen, wenn sich die Geräte-Orientierung ändert.
   void resize(Size size) {
     this.screenSize = size;
     this.tileSize = size.width / this.tileAmount;
