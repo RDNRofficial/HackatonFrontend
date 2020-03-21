@@ -47,13 +47,49 @@ class _QuizPageState extends State<QuizPage> {
     this.future =  Rest.instance.fetchQuestionAnswerList();
   }
 
-  Widget getQuestionWidget(QuestionAnswer qa) {
-    return new Column(
-        children: <Widget>[
-          SizedBox(height: 50),
-          new Text(qa.question.question),
-          new Text(qa.answers.length.toString()),
-        ]);
+  Widget getAnswerWidget(double x, double y, Image background) {
+    return Positioned(
+        left: x,
+        top: y,
+        child: GestureDetector(
+          onTap: () => console.log("Test"),
+          child: Text("asdf"),
+        )
+    );
+  }
+
+    Widget getQuestionWidget(QuestionAnswer qa, List<QuestionAnswer> list) {
+    Image background = Image.network(qa.question.background);
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.lightBlueAccent[100],
+            image: DecorationImage(
+              image: background.image,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton: new FloatingActionButton(
+            onPressed: () => this.nextQuestion(list),
+            child: Icon(Icons.help_outline),
+          ),
+          body: new Column(
+              children: <Widget>[
+                SizedBox(height: 50),
+                Center(child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 30),)),
+                new Text(qa.answers.length.toString()),
+              ]
+          ),
+        ),
+        this.getAnswerWidget(10, 100, background),
+        this.getAnswerWidget(30, 400, background),
+        this.getAnswerWidget(300, 600, background)
+      ],
+    );
   }
 
   @override
@@ -62,24 +98,7 @@ class _QuizPageState extends State<QuizPage> {
       future: this.future,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Stack(
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: Image.network(snapshot.data[this.questionNumber].question.background).image, // <-- BACKGROUND IMAGE
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Scaffold(
-                  backgroundColor: Colors.transparent,
-                  floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion(snapshot.data), child: Icon(Icons.help_outline),),
-                body: this.getQuestionWidget(snapshot.data[this.questionNumber])
-              ),
-            ],
-          );
-
+          return this.getQuestionWidget(snapshot.data[this.questionNumber], snapshot.data);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
