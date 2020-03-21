@@ -48,25 +48,42 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Widget getAnswerWidget(BuildContext context, Answer a) {
-    int width = MediaQuery.of(context).size.width.toInt();
-    double y = 200;
+    Image image = Image.network("http://bitschi.hopto.org:8000" + a.before);
+
     return Positioned(
-        left: 0,
-        top: 0,
-        width: 50,
-        height: 50,
+        left: 215,
+        top: 201,
+        width: 20,
+        height: 20,
         child: GestureDetector(
-          onTap: () => console.log("Test"),
-          child: Image(
-              image: Image.network(a.before).image,
-              width: 50,
-              height: 50,
-          )
+          onTap: () {
+            console.log("Test");
+            setState(() {
+              a.clicked = true;
+            });
+          },
+          child: Image(image: image.image)
         )
     );
   }
 
-    Widget getQuestionWidget(BuildContext context, QuestionAnswer qa, List<QuestionAnswer> list) {
+  List<Widget> getMenuWidget(QuestionAnswer qa) {
+    FloatingActionButton help = FloatingActionButton(
+      onPressed: () {},
+      child: Icon(Icons.live_help),
+    );
+    bool finished = qa.answers.map((a) => !a.solution || a.clicked).fold(true, (a, b) => a&&b);
+    return !finished ? [help] : <Widget>[
+      help,
+      FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Colors.green,
+        child: Icon(Icons.navigate_next),
+      )
+    ];
+  }
+
+  Widget getQuestionWidget(BuildContext context, QuestionAnswer qa, List<QuestionAnswer> list) {
     Image background = Image.network(qa.question.background);
     return Stack(
       children: <Widget>[
@@ -81,24 +98,24 @@ class _QuizPageState extends State<QuizPage> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          floatingActionButton: new FloatingActionButton(
-            onPressed: () => this.nextQuestion(list),
-            child: Icon(Icons.help_outline),
+          floatingActionButtonLocation:  FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: this.getMenuWidget(qa),
+            ),
           ),
+
           body: new Column(
             children: <Widget>[
               SizedBox(height: 50),
-              Center(child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 30),)),
-              new Text(qa.answers.length.toString()),
+              Center(child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 25),)),
             ]
           ),
         ),
-      ] + qa.answers.map((Answer a) => Image(
-        image: Image.network("http://bitschi.hopto.org:8000" + a.before).image,
-        width: 200,
-        height: 200,
-      )).toList()
-      /*qa.answers.map((Answer a) => this.getAnswerWidget(context, a)).toList() */,
+
+      ] + qa.answers.map((Answer a) => this.getAnswerWidget(context, a)).toList(),
     );
   }
 
@@ -110,7 +127,7 @@ class _QuizPageState extends State<QuizPage> {
         if (snapshot.hasData) {
           return this.getQuestionWidget(context, snapshot.data[this.questionNumber], snapshot.data);
         } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
+          return Text("Fehler: ${snapshot.error}");
         }
         return CircularProgressIndicator();
       },

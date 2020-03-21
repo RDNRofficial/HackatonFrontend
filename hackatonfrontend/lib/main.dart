@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/flame.dart';
 import 'package:flame/util.dart';
 import 'package:flutter/gestures.dart';
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: MyHomePage(title: 'Das ist ein Text'),
+      home: MyHomePage(title: 'Corona und was jetzt?'),
     );
   }
 }
@@ -76,6 +78,25 @@ class Router {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  List<Point<double>> virusPoints = [
+    new Point<double>(40, 400),
+    new Point<double>(80, 200),
+    new Point<double>(128, 600),
+    new Point<double>(170, 200),
+    new Point<double>(200, 500),
+    new Point<double>(300, 300),
+  ];
+
+  Widget virusWidget(double x, double y) {
+    return Positioned(
+        left: x,
+        top: y,
+        width: 40,
+        height: 40,
+        child: Image.asset("assets/images/virus.png")
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     
@@ -84,23 +105,27 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-              onPressed: Router.instance.startGame,
-              child: Text("Game"),
-              color: Colors.lightGreen,
+      body: Stack(
+        children: <Widget>[
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: Router.instance.startGame,
+                  child: Text("Game"),
+                  color: Colors.lightGreen,
+                ),
+                RaisedButton(
+                  onPressed: Router.instance.startQuiz,
+                  child: Text("Quiz"),
+                  color: Colors.lightGreen,
+                ),
+              ],
             ),
-            RaisedButton(
-              onPressed: Router.instance.startQuiz,
-              child: Text("Quiz"),
-              color: Colors.lightGreen,
-            ),
-          ],
-        ),
-      ),
+          ),
+        ] + this.virusPoints.map((p) => this.virusWidget(p.x, p.y)).toList(),
+      )
     );
   }
 }
