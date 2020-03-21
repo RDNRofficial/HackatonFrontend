@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flame/sprite.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 
-class Enemy {
+/*class Enemy {
   final double fallingSpeed = 10.0;
 
   final GameEngine game;
@@ -63,4 +63,4 @@ class Enemy {
   }
 
   void onTapDown() {}
-}
+}*/

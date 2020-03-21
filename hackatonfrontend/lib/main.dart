@@ -54,7 +54,8 @@ class Router {
 
     // Alle benötigten Bilder werden vorgeladen.
     Flame.images.loadAll(<String>[
-      "virus.png"
+      "virus.png",
+      "player.png"
     ]);
 
     // Alle benötigten Audios werden vorgeladen.
@@ -64,7 +65,7 @@ class Router {
     runApp(game.widget);
 
     TapGestureRecognizer tapper = TapGestureRecognizer();
-    tapper.onTapDown = game.onTapDown;
+    //tapper.onTapDown = game.onTapDown;
     flameUtil.addGestureRecognizer(tapper);
   }
 

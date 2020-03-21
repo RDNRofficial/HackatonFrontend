@@ -1,94 +1,42 @@
-import 'dart:math';
 import 'dart:ui';
+import "dart:developer" as console;
 
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/gestures.dart';
 import 'package:flutter/cupertino.dart';
-import "package:hackatonfrontend/game/Enemy.dart";
+import 'package:hackatonfrontend/game/GameWorld.dart';
 
-class GameEngine extends Game {
-  final int tileAmount = 7; // Anzahl der Tiles auf der Breite.
+class GameEngine extends Game with PanDetector {
+  final GameWorld gameWorld = GameWorld();
 
-  double spawnCountdown;
-  double spawnCounter;
-  double tileSize; // Größe eines Tiles abhängig von der Screen Breite.
-
-  List<Enemy> enemies;
-  List<Enemy> toRemove;
-
-  Random rnd;
-
-  Size screenSize;
-
-  // Konstruktor: initialize wird extra aufgerufen, um asynchrone Initialisierung zu erlauben. Asynchron geht nicht in Konstruktoren.
   GameEngine() {
-    this.initialize();
+    gameWorld.initializeWorld();
   }
 
-  void initialize() async {
-    this.resize(await Flame.util
-        .initialDimensions()); // Await, damit eventuelle 0x0 Auflösungen verhindert werden.
-    this.rnd = Random();
-    this.enemies = List<Enemy>();
-    this.toRemove = List<Enemy>();
-    this.spawnEnemy();
-    this.spawnCountdown = 5.0;
-    this.spawnCounter = this.spawnCountdown;
-  }
-
-  // In der render Funktion wird alles graphishe dargestellt. Wird ca. 60 mal in der Sekunde aufgerufen, je nach Geräteleistung.
+  @override
   void render(Canvas c) {
-    Rect bgRect =
-        Rect.fromLTWH(0, 0, this.screenSize.width, this.screenSize.height);
-    Paint bgPaint = Paint();
-    bgPaint.color = Color(0xff576574);
-    c.drawRect(bgRect, bgPaint);
-    this.enemies.forEach((e) => e.render(c));
+    gameWorld.render(c);
   }
 
-  // In der update Funktion wird alles berechnet, was Spielrelevant ist. double t ist die Zeitdifferenz, um unabhängig von den Frames eine gleichmäßige Berechnung zu ermöglichen.
+  @override
   void update(double t) {
-    this.enemies.forEach((Enemy e) {
-      if (e.isOffscreen) {
-        this.toRemove.add(e);
-      } else {
-        e.update(t);
-      }
-    });
-    this.toRemove.forEach((e) => this.enemies.remove(e));
-    this.toRemove = List<Enemy>();
-    if (this.spawnCounter - t <= 0) {
-      this.spawnEnemy();
-      this.spawnCounter = this.spawnCountdown;
-    } else {
-      this.spawnCounter -= t;
-    }
+    gameWorld.update(t);
   }
 
-  // isHandled wird verwendet, um Elemente, die eventuell übereinander liegen nicht mehrfach zu bearbeiten. Beispiel: Button über Spielfigur.
-  void onTapDown(TapDownDetails d) {
-    bool isHandled = false;
-
-    if (!isHandled) {
-      enemies.forEach((Enemy e) {
-        if (e.enemyRect.contains(d.globalPosition)) {
-          e.isDead = true;
-          isHandled = true;
-        }
-      });
-    }
-  }
-
-  // Erzeugt einen Virus an random x und y.
-  void spawnEnemy() {
-    double x = rnd.nextDouble() * (this.screenSize.width - tileSize);
-    double y = rnd.nextDouble() * (this.screenSize.height - tileSize);
-    this.enemies.add(Enemy(this, x, y));
-  }
-
-  // Wird immer aufgerufen, wenn sich die Geräte-Orientierung ändert.
+  @override
   void resize(Size size) {
-    this.screenSize = size;
-    this.tileSize = size.width / this.tileAmount;
+    gameWorld.resize(size);
+    gameWorld.givePlayerSize(size);
+    console.log(size.toString());
+  }
+
+  @override
+  void onPanStart(DragStartDetails details) {
+    gameWorld.handleDragStart(details);
+  }
+
+  @override
+  void onPanUpdate(DragUpdateDetails details) {
+    gameWorld.handleDragUpdate(details);
   }
 }
