@@ -25,6 +25,12 @@ class _QuizPageState extends State<QuizPage> {
   Future<List<Question>> futureQuestion;
   Future<List<Answer>> futureAnswer;
 
+  int questionNumber = 0;
+
+  void nextQuestion() {
+    this.setState(() => this.questionNumber++);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -34,14 +40,17 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: FutureBuilder<List<Question>>(
+    return Scaffold(
+      floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion()),
+      body: FutureBuilder<List<Question>>(
         future: this.futureQuestion,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Text(
-                snapshot.data.map((Question q) => q.question).join(" "));
+            return new Column(
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  new Text(snapshot.data[this.questionNumber].question)
+            ]);
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }

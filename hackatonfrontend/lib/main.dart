@@ -67,13 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     runApp(Quiz());
   }
 
-  Future<List<Question>> futureQuestion;
-
-  @override
-  void initState() {
-    super.initState();
-    this.futureQuestion =  Rest.instance.fetchQuestionList();
-  }
 
 
 
