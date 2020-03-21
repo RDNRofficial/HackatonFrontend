@@ -69,8 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    futureQuestion =  Rest.instance.fetchQuestions();
+    futureQuestion =  Rest.instance.fetchQuestionList();
   }
+
 
 
 

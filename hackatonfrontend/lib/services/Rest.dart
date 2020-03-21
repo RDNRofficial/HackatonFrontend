@@ -17,7 +17,7 @@ class Rest {
     this.url = "http://bitschi.hopto.org:8000/";
   }
 
-  Future<List<Question>> fetchQuestions() async {
+  Future<List<Question>> fetchQuestionList() async {
     final response = await http.get(this.url + Rest.URL_QUESTION);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
