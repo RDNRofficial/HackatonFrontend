@@ -4,14 +4,10 @@ import 'package:hackatonfrontend/quiz/CurvePainter.dart';
 import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/services/Rest.dart';
 
-
 class Quiz extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "Corona Quiz",
-        home: Container(
-            color: Colors.white, child: CustomPaint(painter: CurvePainter())));
+    return MaterialApp(title: "Corona Quiz", home: QuizPage());
   }
 }
 
@@ -25,25 +21,24 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-
   Future<List<Question>> futureQuestion;
 
   @override
   void initState() {
     super.initState();
-    this.futureQuestion =  Rest.instance.fetchQuestionList();
+    this.futureQuestion = Rest.instance.fetchQuestionList();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    
     return Container(
+      color: Colors.white,
       child: FutureBuilder<List<Question>>(
         future: this.futureQuestion,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Text(snapshot.data.map((Question q) => q.question).join(" "));
+            return Text(
+                snapshot.data.map((Question q) => q.question).join(" "));
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
