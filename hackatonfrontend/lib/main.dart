@@ -100,19 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Quiz"),
               color: Colors.lightGreen,
             ),
-            FutureBuilder<List<Question>>(
-              future: this.futureQuestion,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(snapshot.data.map((Question q) => q.question).join(" "));
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-
-                // By default, show a loading spinner.
-                return CircularProgressIndicator();
-              },
-            ),
           ],
         ),
       ),
