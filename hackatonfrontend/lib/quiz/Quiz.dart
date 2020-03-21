@@ -48,17 +48,12 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Widget getQuestionWidget(QuestionAnswer qa) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        image: DecorationImage(image: Image.network(qa.question.background).image, fit: BoxFit.cover),
-      ),
-      child: new Column(
-          children: <Widget>[
-            SizedBox(height: 50),
-            new Text(qa.question.question),
-            new Text(qa.answers.length.toString()),
-          ])
-    );
+    return new Column(
+        children: <Widget>[
+          SizedBox(height: 50),
+          new Text(qa.question.question),
+          new Text(qa.answers.length.toString()),
+        ]);
   }
 
   @override
@@ -67,12 +62,24 @@ class _QuizPageState extends State<QuizPage> {
       future: this.future,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return
-            Scaffold(
-
-                floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion(snapshot.data), child: Icon(Icons.help_outline),),
+          return Stack(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: Image.network(snapshot.data[this.questionNumber].question.background).image, // <-- BACKGROUND IMAGE
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Scaffold(
+                  backgroundColor: Colors.transparent,
+                  floatingActionButton: new FloatingActionButton(onPressed: () => this.nextQuestion(snapshot.data), child: Icon(Icons.help_outline),),
                 body: this.getQuestionWidget(snapshot.data[this.questionNumber])
-            );
+              ),
+            ],
+          );
+
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
