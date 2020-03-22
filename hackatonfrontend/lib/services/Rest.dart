@@ -1,4 +1,5 @@
 import 'package:hackatonfrontend/model/Answer.dart';
+import 'package:hackatonfrontend/model/DIY.dart';
 import 'package:hackatonfrontend/model/QuestionAnswer.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,6 +12,7 @@ class Rest {
   static final URL_QUESTION = "rest/question/";
   static final URL_QUESTION_ANSWER = "rest/qa/";
   static final URL_ANSWER = "rest/answer/";
+  static final URL_DIY = "rest/diy/";
 
 
   static final Rest instance = Rest.internal();
@@ -50,6 +52,17 @@ class Rest {
     } else {
       throw Exception('Failed to load question');
     }
+  }
+
+  Future<List<DIY>> fetchDIY() async {
+    final response = await http.get(this.url + Rest.URL_DIY);
+    if(response.statusCode == 200) {
+      List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+      return jsonResponse.map((d) => DIY.fromJson(d)).toList();
+    } else {
+      throw Exception('Failed to load DIY');
+    }
+    
   }
 
 
