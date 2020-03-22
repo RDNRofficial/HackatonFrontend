@@ -5,10 +5,10 @@ import 'package:flame/util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hackatonfrontend/diy/Diy.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/quiz/Quiz.dart';
-
 
 import 'services/Rest.dart';
 
@@ -39,7 +39,6 @@ class MyHomePage extends StatefulWidget {
 class Router {
   static final Router instance = Router.internal();
   factory Router() => instance;
-
 
   Router.internal() {}
 
@@ -78,10 +77,13 @@ class Router {
   startQuiz() {
     runApp(Quiz());
   }
+
+  startDIY() {
+    runApp(Diy());
+  }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<Point<double>> virusPoints = [
     new Point<double>(40, 400),
     new Point<double>(80, 200),
@@ -97,39 +99,40 @@ class _MyHomePageState extends State<MyHomePage> {
         top: y,
         width: 40,
         height: 40,
-        child: Image.asset("assets/images/virus.png")
-    );
+        child: Image.asset("assets/images/virus.png"));
   }
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: Router.instance.startGame,
-                  child: Text("Game"),
-                  color: Colors.lightGreen,
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Stack(
+          children: <Widget>[
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      RaisedButton(
+                        onPressed: Router.instance.startGame,
+                        child: Text("Game"),
+                        color: Colors.lightGreen,
+                      ),
+                      RaisedButton(
+                        onPressed: Router.instance.startQuiz,
+                        child: Text("Quiz"),
+                        color: Colors.lightGreen,
+                      ),
+                      RaisedButton(
+                          onPressed: Router.instance.startDIY,
+                          child: Text("DIY"),
+                          color: Colors.lightGreen),
+                    ],
+                  ),
                 ),
-                RaisedButton(
-                  onPressed: Router.instance.startQuiz,
-                  child: Text("Quiz"),
-                  color: Colors.lightGreen,
-                ),
-              ],
-            ),
-          ),
-        ] + this.virusPoints.map((p) => this.virusWidget(p.x, p.y)).toList(),
-      )
-    );
+              ] +
+              this.virusPoints.map((p) => this.virusWidget(p.x, p.y)).toList(),
+        ));
   }
 }
