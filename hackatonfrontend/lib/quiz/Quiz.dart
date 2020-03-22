@@ -28,25 +28,25 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
 
   Future<List<QuestionAnswer>> future;
-
-
+  double factor = 1;
   int questionNumber = 0;
 
   void nextQuestion(List<QuestionAnswer> questions) {
     this.setState(
-      () {
-        if(questions.length > this.questionNumber + 1) {
-          this.questionNumber++;
-        }else {
-          Router.instance.startGame();
-        }
-      });
+            () {
+          if(questions.length > this.questionNumber + 1) {
+            this.questionNumber++;
+          }else {
+            Router.instance.startGame();
+          }
+        });
   }
 
   @override
   void initState() {
     super.initState();
     this.future =  Rest.instance.fetchQuestionAnswerList();
+
   }
 
   Future<Size> calcutateImageSize(Image image) {
@@ -65,22 +65,20 @@ class _QuizPageState extends State<QuizPage> {
 
 
   Widget getAnswerWidget(BuildContext context, Answer a) {
-    Image image = Image.network("http://bitschi.hopto.org:8000" + a.before);
+    Image image = Image.network("http://bitschi.hopto.org:8000" + (a.clicked ? a.after : a.before));
     Future<Size> size = this.calcutateImageSize(image);
-    size.then((Size s) => console.log(s.width.toString()));
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
     return FutureBuilder<Size> (
 
-    future: size,
+        future: size,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Positioned(
-                left: width * a.y,
+                left: width * a.x,
                 top: height * a.y,
-                width: 200,
-                height: 200,
+                width:  snapshot.data.width * (a.clicked ? a.size_after : a.size_before),
                 child: GestureDetector(
                     onTap: () {
                       console.log("Test");
@@ -141,10 +139,36 @@ class _QuizPageState extends State<QuizPage> {
           ),
 
           body: new Column(
-            children: <Widget>[
-              SizedBox(height: 50),
-              Center(child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 25),)),
-            ]
+              children: <Widget>[
+                SizedBox(height: 50),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.lightBlueAccent[100],
+                    image: DecorationImage(
+                      image: Image.asset("assets/images/quiz/Textfeld.png").image,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  padding: new EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 7),
+                  child: Center(
+                      child: new Text(qa.question.question, textAlign: TextAlign.center, style: TextStyle(fontSize: 20),)
+                  ),
+                ),
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        child: Image.asset("assets/images/quiz/Sound.png"),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.topRight,
+                      child: Text(qa.answers.length.toString(), textAlign: TextAlign.center, style:  TextStyle(fontSize: 20),),
+                    )
+                  ],
+                ),
+              ]
           ),
         ),
 
