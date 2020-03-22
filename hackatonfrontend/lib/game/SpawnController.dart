@@ -5,6 +5,9 @@ import "dart:developer" as console;
 import 'package:flame/components/component.dart';
 import 'package:hackatonfrontend/game/Enemy.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
+import 'package:hackatonfrontend/game/items/Gloves.dart';
+import 'package:hackatonfrontend/game/items/Mask.dart';
+import 'package:hackatonfrontend/game/items/Soap.dart';
 
 class SpawnController extends Component {
   final GameEngine game;
@@ -12,6 +15,7 @@ class SpawnController extends Component {
   Random rnd = new Random();
 
   double spawnCountdown = 0;
+  double maxCountdown = 5;
 
   SpawnController(this.game);
 
@@ -24,9 +28,36 @@ class SpawnController extends Component {
       Enemy insert = new Enemy(game, nx, ny);
       game.add(insert);
       game.enemies.add(insert);
-      spawnCountdown = 5.0;
+      if (maxCountdown > 0.25) {
+        maxCountdown -= 0.1;
+      }
+      spawnCountdown = maxCountdown;
     } else {
       spawnCountdown -= t;
+    }
+  }
+
+  void spawnItem(double x, double y) {
+    int next = rnd.nextInt(3);
+    if (next == 0) {
+      int item = rnd.nextInt(3);
+      switch (item) {
+        case 0:
+          Gloves toInsert = new Gloves(game, x, y);
+          game.add(toInsert);
+          game.items.add(toInsert);
+          break;
+        case 1:
+          Mask toInsert = new Mask(game, x, y);
+          game.add(toInsert);
+          game.items.add(toInsert);
+          break;
+        case 2:
+          Soap toInsert = new Soap(game, x, y);
+          game.add(toInsert);
+          game.items.add(toInsert);
+          break;
+      }
     }
   }
 

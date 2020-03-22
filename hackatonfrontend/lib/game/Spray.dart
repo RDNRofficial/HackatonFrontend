@@ -1,8 +1,10 @@
 import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/sprite.dart';
+import 'package:hackatonfrontend/game/Enemy.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 import "package:box2d_flame/box2d.dart";
+import "dart:developer" as console;
 
 class Spray extends SpriteComponent {
   final GameEngine game;
@@ -10,12 +12,13 @@ class Spray extends SpriteComponent {
   Vector2 cameraPointer = Vector2(0, 0);
   Vector2 movePointer;
 
-  double speed = 250;
+  double speed = 8;
   double reach = 1;
 
   Spray(this.game, double angle, Vector2 movePointer)
       : super.fromSprite(
-            game.tileSize, game.tileSize, new Sprite("spray.png")) {
+            game.tileSize, game.tileSize, new Sprite("spray.gif")) {
+    this.angle = 0;
     this.anchor = Anchor.center;
     this.movePointer = movePointer;
     this.movePointer.normalize();
@@ -31,22 +34,32 @@ class Spray extends SpriteComponent {
     }
 
     if (reach <= 0) {
+      game.sprays.remove(this);
       game.remove(this);
-      reach = 1;
     } else {
-      this.x += movePointer.x * t * speed;
-      this.y += movePointer.y * t * speed;
+      this.x += movePointer.x * t * speed * game.tileSize;
+      this.y += movePointer.y * t * speed * game.tileSize;
       reach -= t;
     }
 
-    List<Component> toRemove = new List<Component>();
-    game.enemies.forEach((SpriteComponent c) {
-      if (this.toRect().contains(c.toRect().center)) {
-        toRemove.add(c);
-        toRemove.add(this);
+    bool remove = false;
+    Enemy eRemove;
+    for (Enemy e in game.enemies) {
+      if (this.toRect().contains(e.toRect().center)) {
+        remove = true;
+        eRemove = e;
+        break;
       }
-    });
-    toRemove.forEach((f) => game.remove(f));
+    }
+    if (remove) {
+      game.sprays.remove(this);
+      game.remove(this);
+    }
+    if (eRemove != null) {
+      game.spawnController.spawnItem(this.x, this.y);
+      game.enemies.remove(eRemove);
+      game.remove(eRemove);
+    }
   }
 
   void addXY(double x, double y) {

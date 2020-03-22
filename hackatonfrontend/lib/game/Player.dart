@@ -12,18 +12,22 @@ import 'package:hackatonfrontend/game/Spray.dart';
 class Player extends SpriteComponent {
   final GameEngine game;
 
-  double speed = 7.5;
+  bool shield = false;
+
+  double speed = 7;
   double shootCooldown = 0;
   double newAngle = 0;
   double health = 100;
+  double immunityCooldown = -1;
+  double shieldCooldown = -1;
 
   Vector2 movePointer;
 
   Player(this.game)
       : super.fromSprite(
-            game.tileSize, game.tileSize, new Sprite("player.png")) {
+            game.tileSize, game.tileSize, new Sprite("player.gif")) {
     this.x = this.game.size.width / 2;
-    this.y = this.game.size.height / 2 - this.height / 2;
+    this.y = this.game.size.height / 2;
     this.anchor = Anchor.center;
     this.angle = 0;
     this.movePointer = Vector2(0, 0);
@@ -31,32 +35,42 @@ class Player extends SpriteComponent {
 
   void update(double t) {
     shootCooldown -= t;
+    if (this.immunityCooldown > 0) {
+      this.immunityCooldown -= t;
+    }
+    if (this.shieldCooldown > 0) {
+      this.shieldCooldown -= t;
+    } else {
+      this.shield = false;
+    }
   }
 
   void move(double x, double y) {
     Vector2 relative =
         Vector2(x - this.game.size.width / 2, y - this.game.size.height / 2);
     Vector2 orient = Vector2(0, -1);
+    relative.normalize();
     this.angle = orient.angleToSigned(relative);
-    this.movePointer = Vector2(
-        relative.x /
-            (this.game.size.width / 2) *
-            this.game.tileSize *
-            this.speed,
-        relative.y /
-            (this.game.size.height / 2) *
-            this.game.tileSize *
-            this.speed);
+    this.movePointer = Vector2(relative.x * this.speed * game.tileSize,
+        relative.y * this.speed * game.tileSize);
     this.game.moveRelative(movePointer);
   }
 
   void damage(double d) {
-    if (this.health - d <= 0) {
-      // TODO
-    } else {
-      this.health -= d;
-      console.log("PLAYER HEALTH: " + this.health.toString());
+    if (shield) {
+      d /= 2;
     }
+    if (this.immunityCooldown <= 0) {
+      if (this.health - d <= 0) {
+        game.over = true;
+      } else {
+        this.health -= d;
+      }
+    }
+  }
+
+  void heal(double d) {
+    this.health += d;
   }
 
   void shoot() {
