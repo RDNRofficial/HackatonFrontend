@@ -79,7 +79,7 @@ class Router {
   }
 
   startDIY() {
-    runApp(DiyPage());
+    runApp(Diy());
   }
 }
 
