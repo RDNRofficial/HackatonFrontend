@@ -17,7 +17,7 @@ class Spray extends SpriteComponent {
 
   Spray(this.game, double angle, Vector2 movePointer)
       : super.fromSprite(
-            game.tileSize, game.tileSize, new Sprite("spray.png")) {
+            game.tileSize, game.tileSize, new Sprite("spray.gif")) {
     this.angle = 0;
     this.anchor = Anchor.center;
     this.movePointer = movePointer;

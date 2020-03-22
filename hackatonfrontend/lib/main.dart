@@ -5,7 +5,7 @@ import 'package:flame/util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hackatonfrontend/diy/Diy.dart';
+import 'package:hackatonfrontend/diy/DiyPage.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/quiz/Quiz.dart';
@@ -55,9 +55,9 @@ class Router {
     // Alle benötigten Bilder werden vorgeladen.
     Flame.images.loadAll(<String>[
       "virus.png",
-      "player.png",
+      "player.gif",
       "background.png",
-      "spray.png",
+      "spray.gif",
       "mask.png",
       "gloves.png",
       "soap.png"
@@ -79,7 +79,7 @@ class Router {
   }
 
   startDIY() {
-    runApp(Diy());
+    runApp(DiyPage());
   }
 }
 

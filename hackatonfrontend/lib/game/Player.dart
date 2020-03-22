@@ -25,7 +25,7 @@ class Player extends SpriteComponent {
 
   Player(this.game)
       : super.fromSprite(
-            game.tileSize, game.tileSize, new Sprite("player.png")) {
+            game.tileSize, game.tileSize, new Sprite("player.gif")) {
     this.x = this.game.size.width / 2;
     this.y = this.game.size.height / 2;
     this.anchor = Anchor.center;
