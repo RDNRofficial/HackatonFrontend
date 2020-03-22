@@ -7,37 +7,8 @@ import 'package:hackatonfrontend/services/Rest.dart';
 
 
 class Diy extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: DiyPage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+  Future<List<DIY>> future = Rest.instance.fetchDIY();
 
-class DiyPage extends StatefulWidget {
-  DiyPage({Key key, this.title}) : super(key: key);
-  final String title;
-
-
-  @override
-  _DiyPageState createState() => _DiyPageState();
-}
-
-class _DiyPageState extends State<DiyPage> {
-  Future<List<DIY>> future;
-
-  @override
-  void initState() {
-    super.initState();
-    this.future =  Rest.instance.fetchDIY();
-
-  }
 
 
   @override
@@ -45,7 +16,7 @@ class _DiyPageState extends State<DiyPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(""),
       ),
       body: FutureBuilder<List<DIY>>(
         future: this.future,
@@ -53,16 +24,16 @@ class _DiyPageState extends State<DiyPage> {
           if (snapshot.hasData) {
             return ListView(
                 children: snapshot.data.map((DIY d) => ListTile(
-                    title: Text(d.diyManual.title),
-                    leading: Image.network(d.diyManual.titleImage),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DiyItem(diy: d),
-                        ),
-                      );
-                    },
+                  title: Text(d.diyManual.title),
+                  leading: Image.network(d.diyManual.titleImage),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DiyItem(diy: d),
+                      ),
+                    );
+                  },
                 )).toList()
             );
           } else if (snapshot.hasError) {
@@ -74,3 +45,5 @@ class _DiyPageState extends State<DiyPage> {
     );
   }
 }
+
+

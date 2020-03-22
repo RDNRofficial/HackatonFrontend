@@ -78,8 +78,14 @@ class Router {
     runApp(Quiz());
   }
 
-  startDIY() {
-    runApp(Diy());
+  startDIY(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Diy(),
+      ),
+    );
+    //runApp(Diy());
   }
 }
 
@@ -125,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.lightGreen,
                       ),
                       RaisedButton(
-                          onPressed: Router.instance.startDIY,
+                          onPressed: () => Router.instance.startDIY(context),
                           child: Text("DIY"),
                           color: Colors.lightGreen),
                     ],
