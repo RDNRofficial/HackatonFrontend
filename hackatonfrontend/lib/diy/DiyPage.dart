@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hackatonfrontend/diy/DiyItem.dart';
 import 'package:hackatonfrontend/model/DIY.dart';
 import 'package:hackatonfrontend/services/Rest.dart';
 
@@ -54,6 +55,14 @@ class _DiyPageState extends State<DiyPage> {
                 children: snapshot.data.map((DIY d) => ListTile(
                     title: Text(d.diyManual.title),
                     leading: Image.network(d.diyManual.titleImage),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DiyItem(diy: d),
+                        ),
+                      );
+                    },
                 )).toList()
             );
           } else if (snapshot.hasError) {
