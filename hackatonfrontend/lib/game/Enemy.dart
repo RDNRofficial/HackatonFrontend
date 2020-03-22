@@ -1,66 +1,52 @@
 import 'dart:ui';
+import "dart:developer" as console;
 
+import 'package:flame/anchor.dart';
+import 'package:flame/components/component.dart';
+import 'package:flame/position.dart';
 import 'package:flame/sprite.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
+import "package:box2d_flame/box2d.dart" as b;
 
-/*class Enemy {
-  final double fallingSpeed = 10.0;
-
+class Enemy extends SpriteComponent {
   final GameEngine game;
 
-  bool isDead;
-  bool isOffscreen;
+  double speed = 70;
 
-  double get speed => this.game.tileSize * 3;
+  b.Vector2 cameraPointer = b.Vector2(0, 0);
 
-  Offset targetLocation;
-
-  Rect enemyRect;
-
-  Sprite enemySprite;
-
-  Enemy(this.game, double x, double y) {
-    this.enemyRect =
-        Rect.fromLTWH(x, y, this.game.tileSize, this.game.tileSize);
-    this.enemySprite = Sprite("virus.png");
-    this.isDead = false;
-    this.isOffscreen = false;
-    this.setTargetLocation();
-  }
-
-  void render(Canvas c) {
-    enemySprite.renderRect(c, this.enemyRect);
+  Enemy(this.game, double spawnX, double spawnY)
+      : super.fromSprite(
+            game.tileSize, game.tileSize, new Sprite("virus.png")) {
+    this.x = spawnX;
+    this.y = spawnY;
+    this.anchor = Anchor.center;
   }
 
   void update(double t) {
-    if (isDead) {
-      this.enemyRect = this
-          .enemyRect
-          .translate(0, this.game.tileSize * this.fallingSpeed * t);
-      if (this.enemyRect.top > this.game.screenSize.height) {
-        isOffscreen = true;
-      }
-    } else {
-      double stepDistance = this.speed * t;
-      Offset toTarget = targetLocation - Offset(enemyRect.left, enemyRect.top);
-      if (stepDistance < toTarget.distance) {
-        Offset stepToTarget =
-            Offset.fromDirection(toTarget.direction, stepDistance);
-        this.enemyRect = this.enemyRect.shift(stepToTarget);
-      } else {
-        this.enemyRect = this.enemyRect.shift(toTarget);
-        this.setTargetLocation();
-      }
+    if (this.toRect().contains(game.player.toRect().center)) {
+      game.player.damage(10);
+      game.remove(this);
     }
+
+    if (game.moving) {
+      this.x += this.cameraPointer.x * t;
+      this.y += this.cameraPointer.y * t;
+    }
+
+    b.Vector2 orient = b.Vector2(0, -1);
+    b.Vector2 playerPos = b.Vector2(
+        game.player.toRect().center.dx, game.player.toRect().center.dy);
+    b.Vector2 direction =
+        b.Vector2(this.toRect().center.dx, this.toRect().center.dy);
+    playerPos.sub(direction);
+    playerPos.normalize();
+    this.angle = orient.angleToSigned(playerPos);
+    this.x += playerPos.x * this.speed * t;
+    this.y += playerPos.y * this.speed * t;
   }
 
-  void setTargetLocation() {
-    double x = this.game.rnd.nextDouble() *
-        (this.game.screenSize.width - this.game.tileSize);
-    double y = this.game.rnd.nextDouble() *
-        (this.game.screenSize.height - this.game.tileSize);
-    this.targetLocation = Offset(x, y);
+  void addXY(double x, double y) {
+    this.cameraPointer = b.Vector2(x, y);
   }
-
-  void onTapDown() {}
-}*/
+}

@@ -1,120 +1,70 @@
 import 'dart:ui';
 import "dart:math" as math;
-
-import 'package:flame/box2d/box2d_component.dart';
-import "package:box2d_flame/box2d.dart";
-import 'package:flame/sprite.dart';
-import 'package:flutter/widgets.dart' as widgets;
-import 'package:hackatonfrontend/game/GameEngine.dart';
-import 'package:flutter/painting.dart';
-import 'package:hackatonfrontend/game/utils.dart';
 import "dart:developer" as console;
 
-class Player extends BodyComponent {
-  static const num PLAYER_RADIUS = 8.0;
+import 'package:flame/anchor.dart';
+import 'package:flame/components/component.dart';
+import 'package:flame/sprite.dart';
+import 'package:hackatonfrontend/game/GameEngine.dart';
+import "package:box2d_flame/box2d.dart";
+import 'package:hackatonfrontend/game/Spray.dart';
 
-  ImagesLoader images = new ImagesLoader();
+class Player extends SpriteComponent {
+  final GameEngine game;
 
-  bool isDead;
-  bool idle;
-  bool forward;
+  double speed = 7.5;
+  double shootCooldown = 0;
+  double newAngle = 0;
+  double health = 100;
 
-  double angle = 0;
-  double health;
-  double shootCooldown;
+  Vector2 movePointer;
 
-  Size screenSize;
-
-  Player(box2d) : super(box2d) {
-    this.health = 100.0;
-    _loadImages();
-    _createBody();
+  Player(this.game)
+      : super.fromSprite(
+            game.tileSize, game.tileSize, new Sprite("player.png")) {
+    this.x = this.game.size.width / 2;
+    this.y = this.game.size.height / 2 - this.height / 2;
+    this.anchor = Anchor.center;
+    this.angle = 0;
+    this.movePointer = Vector2(0, 0);
   }
 
-  void _loadImages() {
-    images.load("player-0", "player.png");
-  }
-
-  @override
-  void renderCircle(Canvas canvas, Offset center, double radius) {
-    if (images.isLoading) {
-      return;
-    }
-
-    var image = images.get("player-0");
-
-    double r = math.sqrt(this.screenSize.width * this.screenSize.width +
-            this.screenSize.height * this.screenSize.height) /
-        2;
-    double alpha = math.atan(this.screenSize.height / this.screenSize.width);
-    double beta = alpha + angle;
-    double shiftY = r * math.sin(beta);
-    double shiftX = r * math.cos(beta);
-    double translateX = this.screenSize.width / 2 - shiftX;
-    double translateY = this.screenSize.height / 2 - shiftY;
-    canvas.translate(translateX, translateY);
-    canvas.rotate(angle);
-
-    paintImage(
-        canvas: canvas,
-        image: image,
-        rect: new Rect.fromCircle(center: center, radius: radius),
-        flipHorizontally: !this.forward,
-        fit: BoxFit.contain);
-  }
-
-  @override
   void update(double t) {
-    this.idle =
-        body.linearVelocity.x.abs() < 0.1 && body.linearVelocity.y.abs() < 0.1;
-    this.forward = body.linearVelocity.x >= 0.0;
-  }
-
-  void _createBody() {
-    final shape = new CircleShape();
-    shape.radius = Player.PLAYER_RADIUS;
-    shape.p.x = 0.0;
-
-    final activeFixtureDef = new FixtureDef();
-    activeFixtureDef.shape = shape;
-    activeFixtureDef.restitution = 1;
-    activeFixtureDef.density = 0.05;
-    activeFixtureDef.friction = 1;
-    FixtureDef fixtureDef = activeFixtureDef;
-    final activeBodyDef = new BodyDef();
-    activeBodyDef.linearVelocity = new Vector2(0.0, 0.0);
-    activeBodyDef.position = new Vector2(0.0, 15.0);
-    activeBodyDef.type = BodyType.DYNAMIC;
-    activeBodyDef.bullet = true;
-    activeBodyDef.linearDamping = 50;
-    BodyDef bodyDef = activeBodyDef;
-
-    this.body = world.createBody(bodyDef)
-      ..createFixtureFromFixtureDef(fixtureDef);
-  }
-
-  void handleDragStart(widgets.DragStartDetails d) {
-    this.move(d.globalPosition.dx, d.globalPosition.dy);
-  }
-
-  void handleDragUpdate(widgets.DragUpdateDetails d) {
-    this.move(d.globalPosition.dx, d.globalPosition.dy);
+    shootCooldown -= t;
   }
 
   void move(double x, double y) {
-    Vector2 orient = new Vector2(0, -10);
-    Vector2 fingerpos = new Vector2(
-        x - this.screenSize.width / 2, y - this.screenSize.height / 2);
-    this.angle = orient.angleToSigned(fingerpos);
-    if (this.angle < 0) {
-      this.angle = 2 * math.pi + this.angle;
-    }
-    impulse(Offset(fingerpos.x / (this.screenSize.width / 2),
-        fingerpos.y / (this.screenSize.height / 2)));
+    Vector2 relative =
+        Vector2(x - this.game.size.width / 2, y - this.game.size.height / 2);
+    Vector2 orient = Vector2(0, -1);
+    this.angle = orient.angleToSigned(relative);
+    this.movePointer = Vector2(
+        relative.x /
+            (this.game.size.width / 2) *
+            this.game.tileSize *
+            this.speed,
+        relative.y /
+            (this.game.size.height / 2) *
+            this.game.tileSize *
+            this.speed);
+    this.game.moveRelative(movePointer);
   }
 
-  void impulse(Offset velocity) {
-    Vector2 force = new Vector2(velocity.dx, -velocity.dy)..scale(100000.0);
-    body.applyLinearImpulse(force, center, true);
+  void damage(double d) {
+    if (this.health - d <= 0) {
+      // TODO
+    } else {
+      this.health -= d;
+      console.log("PLAYER HEALTH: " + this.health.toString());
+    }
+  }
+
+  void shoot() {
+    if (shootCooldown <= 0) {
+      Spray spray = new Spray(game, angle, movePointer);
+      game.add(spray);
+      game.sprays.add(spray);
+      shootCooldown = 0.5;
+    }
   }
 }

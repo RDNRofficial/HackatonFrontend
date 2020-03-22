@@ -5,7 +5,6 @@ import 'package:flame/util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hackatonfrontend/game/DrawEnemy.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 import 'package:hackatonfrontend/model/Question.dart';
 import 'package:hackatonfrontend/quiz/Quiz.dart';
@@ -57,7 +56,9 @@ class Router {
     // Alle benötigten Bilder werden vorgeladen.
     Flame.images.loadAll(<String>[
       "virus.png",
-      "player.png"
+      "player.png",
+      "background.png",
+      "spray.png"
     ]);
 
     // Alle benötigten Audios werden vorgeladen.
