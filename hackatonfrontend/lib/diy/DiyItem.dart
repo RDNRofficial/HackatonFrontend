@@ -14,21 +14,35 @@ class DiyItem extends StatelessWidget {
 
   int num = 1;
 
-  List<Text> getContent() {
+  List<Container> getContent() {
     return this.diy.lists.map((l) => [
-      Text(l.title,
-        textAlign: TextAlign.left,
-        style: TextStyle(
-            fontSize: 25,
+      Container(
+        margin: const EdgeInsets.only(top: 20.0, bottom: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+          Text(
+            l.title,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                fontSize: 25,
+                color: Colors.green,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+          Divider(
             color: Colors.green,
-            fontWeight: FontWeight.bold
-        ),
+          )
+        ],),
       )
     ] + l.steps.map((t) =>
-        Text((l.diyType == "Execution" ? (num++).toString() + ". " : "")+ t.text,
-              style: TextStyle(fontSize: 15),
-              textAlign: TextAlign.left,
-            )
+        Container(
+          margin: const EdgeInsets.only(left: 20.0, bottom: 6),
+          child: Text(
+            (l.diyType == "Execution" ? (num++).toString() + ". " : "")+ t.text,
+            style: TextStyle(fontSize: 15),
+            textAlign: TextAlign.left,
+        ),)
     ).toList()).fold([], (a, b) => a+b);
   }
 
@@ -42,6 +56,7 @@ class DiyItem extends StatelessWidget {
         child: Container(
           margin:  const EdgeInsets.only(left: 20.0, right: 20.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: this.getContent(),
           ),
         ),
