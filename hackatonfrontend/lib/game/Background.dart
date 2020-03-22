@@ -24,7 +24,6 @@ class Background extends SpriteComponent {
       this.y += this.cameraPointer.y * t;
       game.playerPos.add(Vector2(
           -1 * this.cameraPointer.x * t, -1 * this.cameraPointer.y * t));
-      console.log("PlayerPos: " + game.playerPos.toString());
       game.origin = Vector2(this.x, this.y);
     }
   }

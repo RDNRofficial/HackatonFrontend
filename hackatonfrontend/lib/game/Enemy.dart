@@ -24,17 +24,24 @@ class Enemy extends SpriteComponent {
   }
 
   void update(double t) {
+    if (this.toRect().contains(game.player.toRect().center)) {
+      game.player.damage(10);
+      game.remove(this);
+    }
+
     if (game.moving) {
       this.x += this.cameraPointer.x * t;
       this.y += this.cameraPointer.y * t;
     }
 
+    b.Vector2 orient = b.Vector2(0, -1);
     b.Vector2 playerPos = b.Vector2(
         game.player.toRect().center.dx, game.player.toRect().center.dy);
     b.Vector2 direction =
         b.Vector2(this.toRect().center.dx, this.toRect().center.dy);
     playerPos.sub(direction);
     playerPos.normalize();
+    this.angle = orient.angleToSigned(playerPos);
     this.x += playerPos.x * this.speed * t;
     this.y += playerPos.y * this.speed * t;
   }

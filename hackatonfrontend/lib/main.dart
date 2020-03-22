@@ -57,7 +57,8 @@ class Router {
     Flame.images.loadAll(<String>[
       "virus.png",
       "player.png",
-      "background.png"
+      "background.png",
+      "spray.png"
     ]);
 
     // Alle benötigten Audios werden vorgeladen.

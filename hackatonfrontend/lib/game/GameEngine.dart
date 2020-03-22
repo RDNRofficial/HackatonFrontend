@@ -12,6 +12,7 @@ import 'package:hackatonfrontend/game/Background.dart';
 import 'package:hackatonfrontend/game/Enemy.dart';
 import 'package:hackatonfrontend/game/Player.dart';
 import 'package:hackatonfrontend/game/SpawnController.dart';
+import 'package:hackatonfrontend/game/Spray.dart';
 import 'package:wakelock/wakelock.dart';
 import "package:box2d_flame/box2d.dart";
 
@@ -32,6 +33,8 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
 
   SpawnController spawnController;
 
+  List<Spray> sprays;
+
   Vector2 origin;
   Vector2 playerPos;
 
@@ -50,6 +53,7 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
     this.background = new Background(this);
     this.player = new Player(this);
     this.enemies = new List<Enemy>();
+    this.sprays = new List<Spray>();
     this.spawnController = new SpawnController(this);
     this.playerPos = Vector2(player.toRect().center.dx + size.width,
         player.toRect().center.dy + size.height);
@@ -60,14 +64,32 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
 
   void moveRelative(Vector2 pointer) {
     Vector2 movePointer = Vector2(pointer.x * -1, pointer.y * -1);
+    if (this.playerPos.x - tileSize / 2 - movePointer.x <= 0) {
+      movePointer.x = playerPos.x - tileSize / 2;
+    }
+    if (this.playerPos.x + tileSize / 2 - movePointer.x >= worldSize.width) {
+      movePointer.x = playerPos.x + tileSize / 2 - worldSize.width;
+    }
+    if (this.playerPos.y - tileSize / 2 - movePointer.y <= 0) {
+      movePointer.y = playerPos.y - tileSize / 2;
+    }
+    if (this.playerPos.y - tileSize / 2 - movePointer.y >= worldSize.height) {
+      movePointer.y = playerPos.y + tileSize / 2 - worldSize.height;
+    }
     this.background.addXY(movePointer.x, movePointer.y);
     this.enemies.forEach((e) => e.addXY(movePointer.x, movePointer.y));
+    this.sprays.forEach((s) => s.addXY(movePointer.x, movePointer.y));
+  }
+
+  void remove(Component c) {
+    this.components.remove(c);
   }
 
   void resize(Size size) {
     super.resize(size);
     this.worldSize = Size(this.size.width * 3, this.size.height * 3);
     this.tileSize = size.width / TILE_AMOUNT;
+    console.log(size.toString());
   }
 
   void onPanDown(DragDownDetails d) {}
@@ -88,5 +110,9 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
 
   void onPanCancle() {
     this.moving = false;
+  }
+
+  void onTapUp(TapUpDetails d) {
+    player.shoot();
   }
 }

@@ -24,8 +24,6 @@ class SpawnController extends Component {
       Enemy insert = new Enemy(game, nx, ny);
       game.add(insert);
       game.enemies.add(insert);
-      console.log(
-          "New Enemy at X = " + nx.toString() + " and Y = " + ny.toString());
       spawnCountdown = 5.0;
     } else {
       spawnCountdown -= t;

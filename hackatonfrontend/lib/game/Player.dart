@@ -7,12 +7,15 @@ import 'package:flame/components/component.dart';
 import 'package:flame/sprite.dart';
 import 'package:hackatonfrontend/game/GameEngine.dart';
 import "package:box2d_flame/box2d.dart";
+import 'package:hackatonfrontend/game/Spray.dart';
 
 class Player extends SpriteComponent {
   final GameEngine game;
-  double speed = 7.5;
 
+  double speed = 7.5;
+  double shootCooldown = 0;
   double newAngle = 0;
+  double health = 100;
 
   Vector2 movePointer;
 
@@ -24,6 +27,10 @@ class Player extends SpriteComponent {
     this.anchor = Anchor.center;
     this.angle = 0;
     this.movePointer = Vector2(0, 0);
+  }
+
+  void update(double t) {
+    shootCooldown -= t;
   }
 
   void move(double x, double y) {
@@ -41,5 +48,23 @@ class Player extends SpriteComponent {
             this.game.tileSize *
             this.speed);
     this.game.moveRelative(movePointer);
+  }
+
+  void damage(double d) {
+    if (this.health - d <= 0) {
+      // TODO
+    } else {
+      this.health -= d;
+      console.log("PLAYER HEALTH: " + this.health.toString());
+    }
+  }
+
+  void shoot() {
+    if (shootCooldown <= 0) {
+      Spray spray = new Spray(game, angle, movePointer);
+      game.add(spray);
+      game.sprays.add(spray);
+      shootCooldown = 0.5;
+    }
   }
 }
