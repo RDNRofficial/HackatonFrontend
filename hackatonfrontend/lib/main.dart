@@ -58,7 +58,10 @@ class Router {
       "virus.png",
       "player.png",
       "background.png",
-      "spray.png"
+      "spray.png",
+      "mask.png",
+      "gloves.png",
+      "soap.png"
     ]);
 
     // Alle benötigten Audios werden vorgeladen.

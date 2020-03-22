@@ -44,22 +44,19 @@ class Spray extends SpriteComponent {
 
     bool remove = false;
     Enemy eRemove;
-    int i = 0;
     for (Enemy e in game.enemies) {
-      console.log("ENEMY $i AT " + e.toRect().center.toString());
       if (this.toRect().contains(e.toRect().center)) {
-        console.log("HIT ENEMY $i");
         remove = true;
         eRemove = e;
         break;
       }
-      i++;
     }
     if (remove) {
       game.sprays.remove(this);
       game.remove(this);
     }
     if (eRemove != null) {
+      game.spawnController.spawnItem(this.x, this.y);
       game.enemies.remove(eRemove);
       game.remove(eRemove);
     }

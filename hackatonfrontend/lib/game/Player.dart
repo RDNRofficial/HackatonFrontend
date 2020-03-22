@@ -12,10 +12,14 @@ import 'package:hackatonfrontend/game/Spray.dart';
 class Player extends SpriteComponent {
   final GameEngine game;
 
+  bool shield = false;
+
   double speed = 7;
   double shootCooldown = 0;
   double newAngle = 0;
   double health = 100;
+  double immunityCooldown = -1;
+  double shieldCooldown = -1;
 
   Vector2 movePointer;
 
@@ -31,6 +35,14 @@ class Player extends SpriteComponent {
 
   void update(double t) {
     shootCooldown -= t;
+    if (this.immunityCooldown > 0) {
+      this.immunityCooldown -= t;
+    }
+    if (this.shieldCooldown > 0) {
+      this.shieldCooldown -= t;
+    } else {
+      this.shield = false;
+    }
   }
 
   void move(double x, double y) {
@@ -45,17 +57,24 @@ class Player extends SpriteComponent {
   }
 
   void damage(double d) {
-    if (this.health - d <= 0) {
-      // TODO
-    } else {
-      this.health -= d;
-      console.log("PLAYER HEALTH: " + this.health.toString());
+    if (shield) {
+      d /= 2;
     }
+    if (this.immunityCooldown <= 0) {
+      if (this.health - d <= 0) {
+        game.over = true;
+      } else {
+        this.health -= d;
+      }
+    }
+  }
+
+  void heal(double d) {
+    this.health += d;
   }
 
   void shoot() {
     if (shootCooldown <= 0) {
-      console.log("shoot");
       Spray spray = new Spray(game, angle, movePointer);
       game.add(spray);
       game.sprays.add(spray);

@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import "dart:developer" as console;
 
@@ -6,13 +5,15 @@ import 'package:flame/components/component.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
-import 'package:flame/position.dart';
 import 'package:flutter/gestures.dart';
 import 'package:hackatonfrontend/game/Background.dart';
 import 'package:hackatonfrontend/game/Enemy.dart';
 import 'package:hackatonfrontend/game/Player.dart';
 import 'package:hackatonfrontend/game/SpawnController.dart';
 import 'package:hackatonfrontend/game/Spray.dart';
+import 'package:hackatonfrontend/game/items/Gloves.dart';
+import 'package:hackatonfrontend/game/items/Mask.dart';
+import 'package:hackatonfrontend/game/items/Soap.dart';
 import 'package:wakelock/wakelock.dart';
 import "package:box2d_flame/box2d.dart";
 
@@ -22,10 +23,13 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
   Background background;
 
   bool moving = false;
+  bool over = false;
 
   double tileSize;
 
   List<Enemy> enemies;
+
+  List<SpriteComponent> items;
 
   Player player;
 
@@ -54,6 +58,7 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
     this.player = new Player(this);
     this.enemies = new List<Enemy>();
     this.sprays = new List<Spray>();
+    this.items = new List<SpriteComponent>();
     this.spawnController = new SpawnController(this);
     this.playerPos = Vector2(player.toRect().center.dx + size.width,
         player.toRect().center.dy + size.height);
@@ -67,6 +72,17 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
     this.background.addXY(movePointer.x, movePointer.y);
     this.enemies.forEach((e) => e.addXY(movePointer.x, movePointer.y));
     this.sprays.forEach((s) => s.addXY(movePointer.x, movePointer.y));
+    for (SpriteComponent sc in items) {
+      if (sc is Soap) {
+        sc.addXY(movePointer.x, movePointer.y);
+      }
+      if (sc is Mask) {
+        sc.addXY(movePointer.x, movePointer.y);
+      }
+      if (sc is Gloves) {
+        sc.addXY(movePointer.x, movePointer.y);
+      }
+    }
   }
 
   void remove(Component c) {
