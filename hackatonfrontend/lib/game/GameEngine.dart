@@ -64,18 +64,6 @@ class GameEngine extends BaseGame with PanDetector, HasWidgetsOverlay {
 
   void moveRelative(Vector2 pointer) {
     Vector2 movePointer = Vector2(pointer.x * -1, pointer.y * -1);
-    if (this.playerPos.x - tileSize / 2 - movePointer.x <= 0) {
-      movePointer.x = playerPos.x - tileSize / 2;
-    }
-    if (this.playerPos.x + tileSize / 2 - movePointer.x >= worldSize.width) {
-      movePointer.x = playerPos.x + tileSize / 2 - worldSize.width;
-    }
-    if (this.playerPos.y - tileSize / 2 - movePointer.y <= 0) {
-      movePointer.y = playerPos.y - tileSize / 2;
-    }
-    if (this.playerPos.y - tileSize / 2 - movePointer.y >= worldSize.height) {
-      movePointer.y = playerPos.y + tileSize / 2 - worldSize.height;
-    }
     this.background.addXY(movePointer.x, movePointer.y);
     this.enemies.forEach((e) => e.addXY(movePointer.x, movePointer.y));
     this.sprays.forEach((s) => s.addXY(movePointer.x, movePointer.y));

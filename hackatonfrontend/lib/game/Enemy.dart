@@ -11,7 +11,7 @@ import "package:box2d_flame/box2d.dart" as b;
 class Enemy extends SpriteComponent {
   final GameEngine game;
 
-  double speed = 70;
+  double speed = 1.5;
 
   b.Vector2 cameraPointer = b.Vector2(0, 0);
 
@@ -26,6 +26,7 @@ class Enemy extends SpriteComponent {
   void update(double t) {
     if (this.toRect().contains(game.player.toRect().center)) {
       game.player.damage(10);
+      game.enemies.remove(this);
       game.remove(this);
     }
 
@@ -42,8 +43,8 @@ class Enemy extends SpriteComponent {
     playerPos.sub(direction);
     playerPos.normalize();
     this.angle = orient.angleToSigned(playerPos);
-    this.x += playerPos.x * this.speed * t;
-    this.y += playerPos.y * this.speed * t;
+    this.x += playerPos.x * this.speed * t * game.tileSize;
+    this.y += playerPos.y * this.speed * t * game.tileSize;
   }
 
   void addXY(double x, double y) {

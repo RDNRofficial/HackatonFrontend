@@ -12,7 +12,7 @@ import 'package:hackatonfrontend/game/Spray.dart';
 class Player extends SpriteComponent {
   final GameEngine game;
 
-  double speed = 7.5;
+  double speed = 7;
   double shootCooldown = 0;
   double newAngle = 0;
   double health = 100;
@@ -23,7 +23,7 @@ class Player extends SpriteComponent {
       : super.fromSprite(
             game.tileSize, game.tileSize, new Sprite("player.png")) {
     this.x = this.game.size.width / 2;
-    this.y = this.game.size.height / 2 - this.height / 2;
+    this.y = this.game.size.height / 2;
     this.anchor = Anchor.center;
     this.angle = 0;
     this.movePointer = Vector2(0, 0);
@@ -37,16 +37,10 @@ class Player extends SpriteComponent {
     Vector2 relative =
         Vector2(x - this.game.size.width / 2, y - this.game.size.height / 2);
     Vector2 orient = Vector2(0, -1);
+    relative.normalize();
     this.angle = orient.angleToSigned(relative);
-    this.movePointer = Vector2(
-        relative.x /
-            (this.game.size.width / 2) *
-            this.game.tileSize *
-            this.speed,
-        relative.y /
-            (this.game.size.height / 2) *
-            this.game.tileSize *
-            this.speed);
+    this.movePointer = Vector2(relative.x * this.speed * game.tileSize,
+        relative.y * this.speed * game.tileSize);
     this.game.moveRelative(movePointer);
   }
 
@@ -61,6 +55,7 @@ class Player extends SpriteComponent {
 
   void shoot() {
     if (shootCooldown <= 0) {
+      console.log("shoot");
       Spray spray = new Spray(game, angle, movePointer);
       game.add(spray);
       game.sprays.add(spray);
